@@ -1,0 +1,6 @@
+﻿  glad.c
+  main.cpp
+d:\programas\opengl\learnopengl\learnopengl\shader.h(65): warning C4101: 'infoLog': unreferenced local variable
+d:\programas\opengl\learnopengl\learnopengl\shader.h(64): warning C4101: 'success': unreferenced local variable
+d:\programas\opengl\learnopengl\learnopengl\main.cpp(125): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  LearnOpenGL.vcxproj -> D:\Programas\OpenGL\LearnOpenGL\Debug\LearnOpenGL.exe
