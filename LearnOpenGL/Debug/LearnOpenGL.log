@@ -1,6 +1,9 @@
-﻿  glad.c
-  main.cpp
+﻿  main.cpp
 d:\programas\opengl\learnopengl\learnopengl\shader.h(65): warning C4101: 'infoLog': unreferenced local variable
 d:\programas\opengl\learnopengl\learnopengl\shader.h(64): warning C4101: 'success': unreferenced local variable
-d:\programas\opengl\learnopengl\learnopengl\main.cpp(125): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\programas\opengl\learnopengl\learnopengl\main.cpp(10): warning C4244: 'initializing': conversion from 'time_t' to 'int', possible loss of data
+d:\programas\opengl\learnopengl\learnopengl\main.cpp(153): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\programas\opengl\learnopengl\learnopengl\main.cpp(157): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+d:\programas\opengl\learnopengl\learnopengl\main.cpp(165): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\programas\opengl\learnopengl\learnopengl\main.cpp(174): warning C4244: '=': conversion from 'time_t' to 'int', possible loss of data
   LearnOpenGL.vcxproj -> D:\Programas\OpenGL\LearnOpenGL\Debug\LearnOpenGL.exe

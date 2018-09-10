@@ -3,6 +3,7 @@ out vec4 fragColor;
 
 uniform float iTime;
 uniform vec2 iResolution;
+uniform vec2 iMouse;
 
 // EPS defines the epsilon that we use as a minimum for going out of our trace
 // function ray or for defining our shading's function sha 3D treshold
@@ -19,6 +20,9 @@ uniform vec2 iResolution;
 
 // We need this for our hash function
 #define HASHSCALE1 .1031
+
+#define PI acos( -1.0 )
+#define TPI PI * 2.0
 
 // Dave Hoskin's hash one out two in
 float hash(vec2 p)
@@ -235,7 +239,7 @@ vec3 shad(vec3 ro, vec3 rd)
 	vec3 col = vec3(0);
 	vec3 p = ro + rd * t;
 	vec3 n = norm(p);
-	vec3 lig = normalize(vec3(0.0, 0.5, (iTime * 0.2) + 1.0));
+	vec3 lig = normalize(vec3(0.0, 1.5, (iTime * 0.2) + 1.0));
 	lig.y += heiO(ro.xz);
 
 	float amb = 0.5 + 0.5 * n.y;
@@ -248,7 +252,7 @@ vec3 shad(vec3 ro, vec3 rd)
 	col += 0.5 * vec3(24, 49, 89) / 256.0;
 
 	vec3 fint = mix(vec3(1.0), vec3(0), tex);
-	vec3 foa = mix(vec3(0.5), vec3(0), hei(p.xz * 7.0));
+	vec3 foa = mix(vec3(0.5), vec3(0), hei(p.xz * 10.0));
 
 	col += 0.3 * dif;
 	col += 0.3 * amb;
@@ -256,11 +260,6 @@ vec3 shad(vec3 ro, vec3 rd)
 
 	col += -0.05 + fint;
 	col += -0.05 + foa;
-
-	//col = mix( vec3( 0 ), vec3( 1 ), col );
-	//col -= 1.0;
-
-	//if( col.r >= 0.1 ) col += 0.2;
 
 	col *= 1.0 / (1.0 + t * t * 0.1);
 
@@ -274,8 +273,10 @@ void main()
 {
 	// Normalized pixel coordinates (from -1 to 1)
 	vec2 uv = (-iResolution.xy + 2.0 * gl_FragCoord.xy) / iResolution.y;
+	vec2 mou = iMouse / iResolution;
+	mou = -mou;
 
-	vec3 ro = vec3(0.0, -0.8, iTime * 0.2);
+	vec3 ro = vec3(0.0, -0.8 - mou.y, iTime * 0.2);
 
 	/*
 	// Camera lookat
@@ -289,9 +290,8 @@ void main()
 	*/
 	vec3 rd = normalize(vec3(uv, 1.0));
 
-	//ro.xy += path( ro.z );
-	//rd.xy *= rot( sin( WAV * 0.2 ) );
-	//rd.xz = rot( path(ro.z).x / -160.0 )*rd.xz;
+	ro.xz *= rot(mou.x * TPI);
+	rd.xz *= rot(mou.x * TPI);
 
 	ro.y *= heiO(ro.xz);
 
@@ -300,23 +300,6 @@ void main()
 	vec3 n = norm(p);
 
 	vec3 col = d < EPS ? shad(ro, rd) : mix(vec3(0), vec3(0, 0, 0.09), uv.y - 0.4);
-
-	if (map(p).y == 2.0 || map(p).y == 3.0)
-	{
-
-		rd = normalize(reflect(rd, n));
-		ro = p + rd * EPS;
-
-		if (d < EPS || t > FAR)
-		{
-
-			col += shad(ro, rd) * 0.2;
-
-		}
-
-	}
-
-	//vec3 col = vec3( noise( uv * 10.0 ) );
 
 	// Output to screen
 	fragColor = vec4(col, 1.0);

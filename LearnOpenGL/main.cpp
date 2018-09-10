@@ -2,8 +2,12 @@
 #include <GLFW/glfw3.h>
 
 #include "Shader.h"
-
+#include "wtypes.h"
+#include <time.h>
 #include <iostream>
+
+// FPS, iFrame counter.
+int initialTime = time(NULL), finalTime, frameCount;
 
 // We need this to be able to resize our window.
 void framebuffer_size_callback( GLFWwindow* window, int width, int height );
@@ -11,12 +15,33 @@ void framebuffer_size_callback( GLFWwindow* window, int width, int height );
 void processInput( GLFWwindow* window );
 
 // Our image size.
-const int WIDTH = 1768;
-const int HEIGHT = 992;
+int WIDTH;
+int HEIGHT;
+
+// Get the horizontal and vertical screen sizes in pixel
+void GetDesktopResolution(int& horizontal, int& vertical)
+{
+	RECT desktop;
+	// Get a handle to the desktop window
+	const HWND hDesktop = GetDesktopWindow();
+	// Get the size of screen to the variable desktop
+	GetWindowRect(hDesktop, &desktop);
+	// The top left corner will have coordinates (0,0)
+	// and the bottom right corner will have coordinates
+	// (horizontal, vertical)
+	horizontal = desktop.right;
+	vertical = desktop.bottom;
+}
+
+// Our mouse.
+static void cursorPositionCallback( GLFWwindow *window, double xPos, double yPos );
 
 int main() 
 {
 	
+	// Get our window size according to each screen we run our program.
+	GetDesktopResolution( WIDTH, HEIGHT );
+
 	// We initialize glfw and specify which versions of OpenGL to target.
 	glfwInit();
 	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 3 );
@@ -24,7 +49,7 @@ int main()
 	glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
 
 	// Our window object.
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "WaveShader", NULL, NULL);
 	if (window == NULL)
 	{
 
@@ -35,6 +60,9 @@ int main()
 	}
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+	// Initialize the mouse.
+	glfwSetCursorPosCallback( window, cursorPositionCallback );
 
 	// Load glad, we need this library to specify system specific functions.
 	if( !gladLoadGLLoader( ( GLADloadproc ) glfwGetProcAddress ) )
@@ -123,16 +151,35 @@ int main()
 
 		// Set the iTime uniform.
 		float timeValue = glfwGetTime();
-		ourShader.setFloat("iTime", timeValue);
+		ourShader.setFloat( "iTime", timeValue );
 
 		// Set the iResolution uniform.
 		ourShader.setVec2( "iResolution", WIDTH, HEIGHT );
+
+		// Input iMouse.
+		double xPos, yPos;
+		glfwGetCursorPos( window, &xPos, &yPos );
+		//xPos = 2.0 * xPos / WIDTH - 1;
+		//yPos = -2.0 * yPos / HEIGHT + 1;
+		//std::cout << xPos << " : " << yPos << std::endl;
+		ourShader.setVec2( "iMouse", xPos, yPos );
 
 		glBindVertexArray( VAO );
 		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
 
 		glfwSwapBuffers( window );
 		glfwPollEvents();
+
+		frameCount++;
+		finalTime = time( NULL );
+		if( finalTime - initialTime > 0 )
+		{
+		
+			std::cout << "FPS : " << frameCount / (finalTime - initialTime) << std::endl;
+			frameCount = 0;
+			initialTime = finalTime;
+
+		}
 	
 	}
 
@@ -157,5 +204,14 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 
 	glViewport(0, 0, width, height);
+
+}
+
+static void cursorPositionCallback( GLFWwindow *window, double xPos, double yPos )
+{
+
+	xPos = 2.0 * xPos / WIDTH - 1;
+	yPos = -2.0 * yPos / HEIGHT + 1;
+	//std::cout << xPos << " : " << yPos << std::endl;
 
 }
